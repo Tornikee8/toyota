@@ -21,7 +21,7 @@ if(pathname[3] == 'list' && pathname[2] == 'catalog' ){
         let filter = document.getElementById('CrmProductGrid_search_container');
 
         for (let i = 0; i < filter.children.length; i++) {
-            if(filter.children[i].getAttribute("title") == 'Section: .Internal Stock'){
+            if(filter.children[i].getAttribute("title") == 'Section: .Internal Stock' || filter.children[i].getAttribute("title") ==  'Section: .კავკასიის საწყობი'){
                 showCreateDeal = "YES";
             }
         }
