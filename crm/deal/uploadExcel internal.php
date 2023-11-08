@@ -276,9 +276,14 @@
 
     let createbtn=`<button onClick="createProds();" id="createBtn">დამატება</button>`;
 
-        
-    document.getElementById("prodTableContent").innerHTML = content;
-    document.getElementById("createDiv").innerHTML = createbtn;
+    if(document.getElementById("prodTableContent")){                
+         document.getElementById("prodTableContent").innerHTML = content;
+    }
+    if(document.getElementById("createDiv")){
+        document.getElementById("createDiv").innerHTML = createbtn;
+    }
+
+    
 
 
 
@@ -315,7 +320,7 @@
         });
 
 
-        location.href='http://213.131.35.178:62100/crm/deal/uploadExcel.php';
+        location.href='http://213.131.35.178:62100/crm/deal/uploadexcelinternal.php';
 
     }
 
