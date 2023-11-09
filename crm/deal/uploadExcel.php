@@ -127,10 +127,17 @@ $oldProds=getAllProds();
 $lostProds=getAllProdsLost();
 
 
+$dealIsCreatedOnThisProd=array();
+
 
 foreach($oldProds as $oldProd){
     if(!in_array($oldProd['PROPERTY_CHASSIS_X0IZII_VALUE'],$newChassis)){
         array_push($registeredProds['removed'],$oldProd);
+
+        // printArr($oldProd);
+
+
+
     }
 }
 

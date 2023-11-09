@@ -42,7 +42,7 @@ foreach($prods as $prod){
 
     $ProductID=$Product[0]["ID"];
 
-    $Product[0]["deal_status"] = 'sold';
+    $Product[0]["deal_status"] = 89;
  
     $arLoadProductArray = array(
         "PROPERTY_VALUES" => $Product[0],
