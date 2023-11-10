@@ -12,9 +12,18 @@ function printArr($arr) {
 CJSCore::Init(array("jquery"));
 function issetEx($param) { return (isset($param) && !empty($param)) ? $param : false; }
 
+
+
+function getDealsByFilter($arFilter, $arSelect = array(), $arSort = array("ID"=>"DESC")) {
+    $arDeals = array();
+    $res = CCrmDeal::GetList($arSort, $arFilter, array("ID","TITLE"));
+    while($arDeal = $res->Fetch()) array_push($arDeals, $arDeal);
+    return (count($arDeals) > 0) ? $arDeals : false;
+}
+
 function getCIBlockElementsByFilter($arFilter = array()) {
     $arElements = array();
-    $arSelect = Array("ID","NAME","TIMESTAMP_X","PROPERTY_CHASSIS_X0IZII","PROPERTY_PROD_MON_Z1ICNY","PROPERTY_SHIP_DATE_TA6TRF","PROPERTY_STOCKING_DATE_LCAFN6","PROPERTY_VEHICLE_VZMJ9H","PROPERTY_ENGINE_1BWQM4","PROPERTY_MODEL_CODE_6HLW6F","PROPERTY_SFX_CT8L4X");
+    $arSelect = Array("ID","NAME","TIMESTAMP_X","PROPERTY_CHASSIS_X0IZII","PROPERTY_PROD_MON_Z1ICNY","PROPERTY_SHIP_DATE_TA6TRF","PROPERTY_STOCKING_DATE_LCAFN6","PROPERTY_VEHICLE_VZMJ9H","PROPERTY_ENGINE_1BWQM4","PROPERTY_MODEL_CODE_6HLW6F","PROPERTY_SFX_CT8L4X","PROPERTY_DEAL_STATUS","PROPERTY_DEAL");
     $res = CIBlockElement::GetList(Array(), $arFilter, false, Array("nPageSize"=>5000), $arSelect);
     while($ob = $res->GetNextElement()) {
         $arFilds = $ob->GetFields();
@@ -48,11 +57,12 @@ function strToNum($extranetId) {
 
 function getAllProds(){
 
+
+    $stockIds = array(15);
     $res = array();
-    $arFilter=Array("IBLOCK_ID"=>14,"IBLOCK_SECTION_ID" => 15);
+    $arFilter=Array("IBLOCK_ID"=>14,"IBLOCK_SECTION_ID" => $stockIds);
     $prods=getCIBlockElementsByFilter($arFilter);
 
-   
     return $prods;
 
 }
@@ -68,6 +78,19 @@ function getAllProdsLost(){
     return $prods;
 
 }
+
+function getWidhDealInfo($id){
+
+    $arFilter=array("ID"=>$id);
+    $deal=getDealsByFilter($arFilter);
+
+    $dealTitle=$deal[0]["TITLE"];
+
+    return $dealTitle;
+
+
+}
+
 
 // -------------------------------------------------- //
 
@@ -100,8 +123,6 @@ $goodProds=array();
 
 foreach ($arParams["CSV"] as $entry) {
 
-    // printArr($entry);
-
     if($entry[14]){
 
         array_push($newChassis,$entry[14]);
@@ -116,9 +137,7 @@ foreach ($arParams["CSV"] as $entry) {
             array_push($registeredProds['good'] , $entry);
         }
     }
-
-    
-       
+      
 }
 
 
@@ -133,10 +152,15 @@ $dealIsCreatedOnThisProd=array();
 foreach($oldProds as $oldProd){
     if(!in_array($oldProd['PROPERTY_CHASSIS_X0IZII_VALUE'],$newChassis)){
         array_push($registeredProds['removed'],$oldProd);
+        if($oldProd["PROPERTY_DEAL_STATUS_VALUE"]){
 
-        // printArr($oldProd);
+            
 
+            $oldProd["dealNAME"] = getWidhDealInfo($oldProd["PROPERTY_DEAL_VALUE"]);
 
+            array_push($dealIsCreatedOnThisProd,$oldProd);
+        }
+       
 
     }
 }
@@ -151,7 +175,6 @@ foreach($lostProds as $lostProd){
 if($registeredProds['good'] || $goodProds){
 
  
-
     ?> 
     
 
@@ -169,11 +192,33 @@ if($registeredProds['good'] || $goodProds){
             </tr>
         </thead>
         <tbody id="prodTableContent" class="contentProds">
-
+                
         </tbody>
     </table>
 
-  
+
+    <div id="withDeal" style="display:none" class="withDealDiv">
+        <h1 style="color:red; text-align: center"> აღნიშნულ მანქანებზე შექმნილია გარიგება </h1>
+        <table class="contentTable">
+            <thead class ="contentTableHead">
+                <tr >
+                    <td>CHASSIS</td>
+                    <td>PROD. MON</td>
+                    <td>SHIP DATE</td>
+                    <td>STOCKING DATE</td>
+                    <td>VEHICLE</td>
+                    <td>ENGINE</td>
+                    <td>MODEL CODE</td>
+                    <td>SFX</td>
+                    <td>deal</td>
+                </tr>
+            </thead>
+
+            <tbody id="widhDealContent" class="contentProds">
+
+            </tbody>
+        </table>
+    </div>
 
 
     <div class="createDiv" id="createDiv">
@@ -260,6 +305,16 @@ if($registeredProds['good'] || $goodProds){
         .createBtn{
             height:50px;
         }
+        .prodWidhDealTable{
+            background:red;
+            color:white;
+        }
+
+        .withDealDiv{
+            justify-content:center;
+            display:flex;
+            width:100%;
+        }
 
     </style>
 
@@ -273,8 +328,43 @@ if($registeredProds['good'] || $goodProds){
 
 let prodArr = <?php echo json_encode($registeredProds); ?>;
 let newProds = <?php echo json_encode($goodProds); ?>;
+let prodsWithDeals = <?php echo json_encode($dealIsCreatedOnThisProd); ?>;
 let content = "";
+let contentWidhDeal = "";
 
+
+
+if(prodsWithDeals){
+
+
+    for(let i = 0; i < prodsWithDeals.length; i++){
+
+    contentWidhDeal += `<tr>
+                        <td class="prodWidhDealTable">${prodsWithDeals[i]['PROPERTY_CHASSIS_X0IZII_VALUE']}</td>
+                        <td class="prodWidhDealTable">${prodsWithDeals[i]['PROPERTY_PROD_MON_Z1ICNY_VALUE']}</td>
+                        <td class="prodWidhDealTable">${prodsWithDeals[i]['PROPERTY_SHIP_DATE_TA6TRF_VALUE']}</td>
+                        <td class="prodWidhDealTable">${prodsWithDeals[i]['PROPERTY_STOCKING_DATE_LCAFN6_VALUE']}</td>
+                        <td class="prodWidhDealTable">${prodsWithDeals[i]['PROPERTY_VEHICLE_VZMJ9H_VALUE']}</td>
+                        <td class="prodWidhDealTable">${prodsWithDeals[i]['PROPERTY_ENGINE_1BWQM4_VALUE']}</td>
+                        <td class="prodWidhDealTable">${prodsWithDeals[i]['PROPERTY_MODEL_CODE_6HLW6F_VALUE']}</td>
+                        <td class="prodWidhDealTable">${prodsWithDeals[i]['PROPERTY_SFX_CT8L4X_VALUE']}</td>    
+                        <td class="prodWidhDealTable">
+                            <a href='http://213.131.35.178:62100/crm/deal/details/${prodsWithDeals[i]['PROPERTY_DEAL_VALUE']}/'>${prodsWithDeals[i]['dealNAME']}</a>
+                        </td>     
+                </tr>`
+
+    }
+
+    if(document.getElementById("withDeal") && prodsWithDeals.length>0){
+        document.getElementById("withDeal").style.display="block";
+    }
+
+
+    if(document.getElementById("widhDealContent")){
+        document.getElementById("widhDealContent").innerHTML = contentWidhDeal;
+    }
+   
+}
 
 
 
