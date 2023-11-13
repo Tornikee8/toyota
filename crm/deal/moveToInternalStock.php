@@ -50,7 +50,7 @@ function addElement($infoArr) {
         $CCatalogProduct = new CCatalogProduct();
         $arCatalogProductFields = array(
             "ID" => $res,
-            "MEASURE" => $measure,
+            "MEASURE" => 1,
             "CURRENCY" => 'GEL',
             "VAT_ID" => 0,
             

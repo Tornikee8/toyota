@@ -1,4 +1,7 @@
 <?php
+
+
+CJSCore::Init(array("jquery"));
 /**
  * @global \CMain $APPLICATION
  * @var $component \CatalogProductDetailsComponent
@@ -237,50 +240,46 @@ pathname 	= window.location.pathname.split("/");
 if(pathname[2] == "catalog" && pathname[3] == "14" && pathname[4] == "product"){
 
 
-    let iblocSectionName=document.querySelector('[data-cid="IBLOCK_SECTION"]');
-    
-    if(iblocSectionName){
-        iblocSectionName.style.pointerEvents="none";
-
-        sectionFilter=iblocSectionName.children[2].children[0].children[0].children[0].textContent;
-
-        if(sectionFilter == "კავკასიის საწყობი"){
-            
-
-           /////////////////////////
-
-
-
-        }
-
-      
-    }
 
     let variantDivContainer=document.querySelector('[data-name="variation_grid"]');
     
     if(variantDivContainer){
         variantDivContainer.style.display="none";
     }
+	
+
+	
+    let iblocSectionName=document.querySelector('[data-cid="IBLOCK_SECTION"]');
     
+ 
 
     let settingGilaki=document.querySelectorAll('.ui-toolbar-right-buttons');
-    
-    if(!document.getElementById("sectionChangeButton")){
-        sectionChange = document.createElement('div');
-        sectionChange.id='sectionChangeButton';
-        sectionChange.innerHTML=`<div  style="margin:15px;padding: 15px; background:green; font-size: 12px; width: 120px;">
-                <a style="color:white" href='http://213.131.35.178:62100/crm/deal/uploadexcelinternal.php'>Excel შეტვირთვა</a>
-            </div>`;
 
-        settingGilaki[0].parentElement.appendChild(sectionChange);
+
+	if(iblocSectionName){
+        iblocSectionName.style.pointerEvents="none";
+
+        sectionFilter=iblocSectionName.children[2].children[0].children[0].children[0].textContent;
+
+        if(sectionFilter == "კავკასიის საწყობი"){
+            
+			if(!document.getElementById("sectionChangeButton")){
+				sectionChange = document.createElement('div');
+				sectionChange.id='sectionChangeButton';
+
+				sectionChange.innerHTML=`<div  onclick="showProdChange();" class="webform-small-button webform-small-button-transparent">საწყობის ცვლილება</div>`;
+
+				settingGilaki[0].parentElement.appendChild(sectionChange);
+			}
+        }  
     }
+    
     
 
 
     if(settingGilaki){
         for (let i = 0; i < settingGilaki.length; i++) {   
 
-            console.log(settingGilaki[i].getAttribute("id"));
 
             if(settingGilaki[i].getAttribute("id")!="sectionChangeButton"){
                 settingGilaki[i].style.display="none";
@@ -306,6 +305,125 @@ if(pathname[2] == "catalog" && pathname[3] == "14" && pathname[4] == "product"){
 
 
 
+
+
+
+
+
+let prodChangeContanier = `
+<div id="prodChangeContanier" style="position: absolute; left: 25%; top: 15%; z-index: 1000; width: 600px; padding: 0 20px 0; background-color: #fff;">
+		<div style="height: 49px;">
+			<span class="popup-window-titlebar-text">საწყობის ცვლილება</span>
+		</div>
+		<div style="overflow-x: auto; padding: 20px; background-color: #eef2f4;">
+			<div>
+				<div class="bizproc-item bizproc-workflow-template" style="border: 1px solid #D8D8D8; padding: 0 1.5em 1.5em 1em;">
+					<span class="bizproc-item-legend bizproc-workflow-template-title" style="padding: 0 1em; margin-left: 2em; font-size: 110%; color: #000000; position: absolute; top: 61px; background: #eef2f4;">საწყობის ცვლილება</span>
+					<div class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
+						
+					<div   id="priceDiv" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
+						<span style="display: block; margin: 0 0 15px 0; font-size: 13px; color: #80868e;">
+							ფასი:
+						</span>
+						<div>
+							<input id="priceValue" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="text" />
+						</div>
+					</div>	
+					<div   id="priceDivGel" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
+						<span style="display: block; margin: 0 0 15px 0; font-size: 13px; color: #80868e;">
+							ფასი (ლარი):
+						</span>
+						<div>
+							<input id="priceValueGel" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="text" />
+						</div>
+					</div>	
+					</div>
+				</div>
+			</div>
+			<div id="prodChangeSuccessBlock" style="display: none; color: green; text-align: center; margin: 15px 0 5px; font-size: 16px;">თქვენი მოთხოვნა გაგზავნილია</div>
+			<div id="prodChangeFailBlock" style="display: none; color: red; text-align: center; margin: 15px 0 5px; font-size: 16px;">მოთხვონის დროს დაფიქსირდა შეცდომა</div>
+			<div id="prodChangeWarningBlock" style="display: none; color: red; text-align: center; margin: 15px 0 5px; font-size: 16px;">გთხოვთ შეავსოთ ყველა ველი</div>
+		</div>
+		<span onclick="removeProdChange();" class="popup-window-close-icon popup-window-titlebar-close-icon"></span>
+		<div style="text-align: center; padding: 20px 0 10px; position: relative;">
+			<span id="saveProdChangeBtn" onclick="saveProdChange()" class="popup-window-button" style="background: #bbed21;-webkit-box-shadow: none; box-shadow: none; color: #535c69;">შენახვა</span>
+			<span onclick="removeProdChange();" class="popup-window-button" style="margin-right: 0; color: #f1361b; border-bottom-color: #ffb4a9">გაუქმება</span>
+		</div>
+	</div>
+`;
+
+
+
+
+
+function showProdChange() {
+	let templateContainer = document.querySelector(".template-bitrix24");
+	$(templateContainer).append(prodChangeContanier);      
+}
+
+
+function removeProdChange() {
+	let prodChangeContanier = document.getElementById("prodChangeContanier");
+	let templateContainer = document.querySelector(".template-bitrix24");
+
+	templateContainer.removeChild(prodChangeContanier);
+}
+
+
+function saveProdChange() {
+          
+	let price = document.getElementById("priceValue").value;
+	let priceGel = document.getElementById("priceValueGel").value;
+
+	if(!price || !priceGel){
+		let error = document.getElementById("prodChangeWarningBlock").style.display="block";
+	}
+
+
+	if(price && priceGel) {
+
+		let params = {};
+
+		params["price"] = price;
+		params["priceGel"] = priceGel;
+		params["prodId"]=pathname[5];
+		
+
+		console.log(params);
+	
+		post_fetch(`${location.origin}/rest/local/changeCategory.php`, {"params":params})
+        .then(data => {
+            return data.json();
+        })
+        .then(data => {
+            console.log(data);
+        })
+        .catch(err => {
+            console.log(err);
+   		 });
+		 
+
+		location.href='http://213.131.35.178:62100/crm/catalog/list/16/?IBLOCK_ID=14';
+		
+	}
+}
+
+
+async function post_fetch(url, data = {}) {
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(data)
+        });
+        return response;
+    }
 
 
 </script>
