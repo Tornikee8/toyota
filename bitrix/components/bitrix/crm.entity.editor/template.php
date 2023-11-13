@@ -918,8 +918,11 @@ if(!empty($htmlEditorConfigs))
 
                 if(buttonIds && buttonIds.includes("document")){
                         // console.log(buttonIds);
-                }else{
-                        buttonIds=eachButtonContainer.children[i].style.setProperty('display', 'none', 'important');
+                }else if(buttonIds && buttonIds.includes("bp_starter")){
+                       
+                }else{	
+					console.log(buttonIds);
+					buttonIds=eachButtonContainer.children[i].style.setProperty('display', 'none', 'important');
                 }
             }
         }
