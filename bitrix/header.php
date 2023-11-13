@@ -19,13 +19,13 @@ setInterval(() => {
         closeButtonForRefresh = document.querySelector('.side-panel-label-icon-box');
         if(closeButtonForRefresh){
             closeButtonForRefresh.addEventListener("click", () =>{
+                // console.log('restart');
                 setTimeout(() => {
 
                     if(pathname[3] == 'list' && pathname[2] == 'catalog' ){
+                        // console.log('restart');
                         location.reload();
-                    }   
-
-                  
+                    }      
                     
                 }, 800);
             })
