@@ -38,6 +38,71 @@ $createSectionButtonID = "{$prefix}_create_section";
 $configMenuButtonID = '';
 $configIconID = '';
 
+//// ================================== ჩემი ჩამატებული ===============================///////////
+
+function getDealsByFilter_CRM_ENTITY($arFilter, $arSelect = array(), $arSort = array("ID"=>"DESC")) {
+    $arDeals = array();
+    $res = CCrmDeal::GetList($arSort, $arFilter, array("ID","STAGE_ID","CONTACT_ID"));
+    while($arDeal = $res->Fetch()) array_push($arDeals, $arDeal);
+    return (count($arDeals) > 0) ? $arDeals : false;
+}
+
+
+
+function getCIBlockElementsByFilter_CRM_ENTITY($arFilter = array(),$sort = array()){
+    $arElements = array();
+    $arSelect = array("ID", "IBLOCK_ID", "NAME", "DATE_ACTIVE_FROM", "PROPERTY_*");
+    $res = CIBlockElement::GetList($sort, $arFilter, false, array("nPageSize" => 50), $arSelect);
+    while ($ob = $res->GetNextElement()) {
+        $arFilds = $ob->GetFields();
+        $arProps = $ob->GetProperties();
+        $arPushs = array();
+        foreach ($arFilds as $key => $arFild) $arPushs[$key] = $arFild;
+        foreach ($arProps as $key => $arProp) $arPushs[$key] = $arProp["VALUE"];
+        array_push($arElements, $arPushs);
+    }
+    return $arElements;
+}
+
+
+
+$fullUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+
+
+$urlArr=explode("/",$fullUrl);
+
+
+
+$deal_ID=$urlArr[6];
+
+$arFilter=array("IBLOCK_ID"=>17,
+				"PROPERTY_DEAL"=>$deal_ID);
+$gadaxdebiElement=getCIBlockElementsByFilter_CRM_ENTITY($arFilter);
+
+$allGadaxda=array();
+
+foreach($gadaxdebiElement as $singleGadaxda){
+	$arPush=array();
+	$arPush["DATE"]= $singleGadaxda["DATE"];
+	$arPush["MONEY"]= $singleGadaxda["MONEY"];
+
+	array_push($allGadaxda,$arPush);
+}
+
+
+
+
+
+
+$gadaxdeb=$allGadaxda;
+
+
+//// ================================== ჩემი ჩამატებული ===============================///////////
+
+
+
+
 if($arResult['REST_USE'])
 {
 	$restSectionButtonID = "{$prefix}_rest_section";
@@ -230,6 +295,7 @@ if(!empty($htmlEditorConfigs))
 		?></div><?
 	}
 }
+
 ?>
 
 <?if (!empty($arResult['BIZPROC_MANAGER_CONFIG'])):
@@ -928,12 +994,98 @@ if(!empty($htmlEditorConfigs))
         }
         
     }
-    
 
-    rightSide =document.querySelector(".crm-entity-stream-container"); 
+
+
+</script>
+
+
+<style>
+
+	table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+	}
+
+	td, th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+	}
+
+	tr:nth-child(even) {
+	background-color: #dddddd;
+	}
+
+	.gadaxdebi{
+		/* display:flex; */
+		align-content:center;
+	}
+
+</style>
+
+
+
+
+
+
+<script>
+    
+	let gadaxdeb = <?php echo json_encode($gadaxdeb); ?>;
+	
+	console.log(gadaxdeb);
+
+	let gadaxdebiDIV=
+	`<div class="gadaxdebi">
+		<h1>გადახდები</h1>
+		<div id="gadaxdebiTable"></div>
+	</div>`;
+
+	let gadaxdaTable='';
+
+	if(gadaxdeb){
+		 gadaxdaTable+=`<table>
+			<tr>
+				<th>თარიღი</th>
+				<th>თანხა</th>
+			</tr>
+		`;
+		
+		for (let i = 0; i < gadaxdeb.length; i++) {
+
+			gadaxdaTable+=`
+			<tr>
+				<td>${gadaxdeb[i]["DATE"]}</td>
+				<td>${gadaxdeb[i]["MONEY"]}</td>
+			</tr>`;
+		
+			
+		}
+
+		gadaxdaTable+=`</table>`;
+	}
+
+	mainDiv =document.querySelector('[data-tab-id="main"]'); 
+    if(mainDiv){
+		mainDiv.style.display="flex";
+		mainDiv.style.gap="2rem";
+		mainDiv.innerHTML+=`${gadaxdebiDIV}`;
+    }
+
+	
+	rightSide =document.querySelector(".crm-entity-stream-container"); 
     if(rightSide){
         rightSide.style.display="none";
     }
+
+	gadaxdebiTableDiv =document.getElementById("gadaxdebiTable"); 
+    if(gadaxdebiTableDiv){
+        gadaxdebiTableDiv.innerHTML=gadaxdaTable;
+    }
+
+
+	
 
 
 
