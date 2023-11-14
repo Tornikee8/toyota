@@ -1052,14 +1052,12 @@ if(!empty($htmlEditorConfigs))
 		let price = <?php echo json_encode($price); ?>;
 		let valuta = <?php echo json_encode($valuta); ?>;
 
-		console.log(price);
-		console.log(valuta);
 		
 		let gadaxdebiDIV=
 		`<div class="gadaxdebi">
 			<h1>გადახდები</h1>
 			<div class = "seperator"></div>
-			<div  onclick="showAddPayment();" class="webform-small-button webform-small-button-transparent">გადახდის დამატება</div>
+			<div  onclick="showAddPayment();" class="webform-small-button webform-small-button-transparent" style="background-color:silver">გადახდის დამატება</div>
 			<div class = "seperator"></div>
 			<div id="gadaxdebiTable"></div>
 			<div class = "seperator"></div>
@@ -1123,7 +1121,7 @@ if(!empty($htmlEditorConfigs))
 			gadaxdaTable+=`<table>
 				<tr>
 					<th>თარიღი</th>
-					<th>თანხა</th>
+					<th>თანხა (${valuta})</th>
 				</tr>
 			`;
 			
@@ -1161,14 +1159,21 @@ if(!empty($htmlEditorConfigs))
 
 
 		if(price){
-			darcheniliGadaxda=`<p>სულ გადასახდელი: ${price}</p>`;
+
+			price = price-0;
+			let priceFormated = price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+			darcheniliGadaxda=`<p>სულ გადასახდელი: ${priceFormated}  ${valuta}</p>`;
+
 			if(gadaxdeb && gadaxdeb.length>0){
 				ukveGadaxdili=0;
 				for (let i = 0; i < gadaxdeb.length; i++) {
 					ukveGadaxdili+=gadaxdeb[i]["MONEY"];
 				}
 				darchenili=price-ukveGadaxdili;
-				darcheniliGadaxda+=`<p>დარჩენილი გადახდა: ${darchenili}</p>`;
+				let darcheniliFormated = darchenili.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+				darcheniliGadaxda+=`<p>დარჩენილი გადახდა: ${darcheniliFormated}  ${valuta}</p>`;
 			}
 		}
 
