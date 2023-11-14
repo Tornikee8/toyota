@@ -4,7 +4,7 @@ $APPLICATION->SetTitle("test");
 
 
 
-function getCIBlockElementsByFilter_7($arFilter = array(),$sort = array()){
+function getCIBlockElementsByFilter_7S($arFilter = array(),$sort = array()){
     $arElements = array();
     $arSelect = array("ID", "CATEGORY_ID", "NAME", "DATE_ACTIVE_FROM", "PROPERTY_*");
     $res = CIBlockElement::GetList($sort, $arFilter, false, array("nPageSize" => 50), $arSelect);
@@ -22,10 +22,10 @@ function getCIBlockElementsByFilter_7($arFilter = array(),$sort = array()){
 
 
 
-// $root=$this->GetRootActivity();
-// $deal_ID=$root->GetVariable("deal_ID");
+$root=$this->GetRootActivity();
+$deal_ID=$root->GetVariable("deal_ID");
 
-$deal_ID=43;
+// $deal_ID=43;
 
 
 $canSell = "NO";
@@ -35,7 +35,7 @@ $prods = CCrmDeal::LoadProductRows($deal_ID);
 foreach($prods as $prod){
 
     $arFilter=array("ID"=>$prod['PRODUCT_ID']);
-    $Product=getCIBlockElementsByFilter_7($arFilter);
+    $Product=getCIBlockElementsByFilter_7S($arFilter);
 
     $categoryID=$Product[0]["CATEGORY_ID"];
     
@@ -47,6 +47,5 @@ foreach($prods as $prod){
     
 }
 
-echo $canSell;
 
-// $this->SetVariable("canSell" , $canSell);
+$this->SetVariable("canSell" , $canSell);
