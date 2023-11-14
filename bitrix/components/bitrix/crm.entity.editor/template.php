@@ -1,6 +1,6 @@
 <?php
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED!==true)die();
-
+CJSCore::Init(array("jquery"));
 /**
  * Bitrix vars
  * @global CUser $USER
@@ -42,7 +42,8 @@ $configIconID = '';
 
 function getDealsByFilter_CRM_ENTITY($arFilter, $arSelect = array(), $arSort = array("ID"=>"DESC")) {
     $arDeals = array();
-    $res = CCrmDeal::GetList($arSort, $arFilter, array("ID","STAGE_ID","CONTACT_ID"));
+	$arSelect=array("ID","CURRENCY_ID","OPPORTUNITY");
+    $res = CCrmDeal::GetList($arSort, $arFilter, $arSelect);
     while($arDeal = $res->Fetch()) array_push($arDeals, $arDeal);
     return (count($arDeals) > 0) ? $arDeals : false;
 }
@@ -90,12 +91,17 @@ foreach($gadaxdebiElement as $singleGadaxda){
 	array_push($allGadaxda,$arPush);
 }
 
+$arFilter=array("ID"=>$deal_ID);
+$deal=getDealsByFilter_CRM_ENTITY($arFilter);
+
 
 
 
 
 
 $gadaxdeb=$allGadaxda;
+$price=$deal[0]["OPPORTUNITY"];
+$valuta=$deal[0]["CURRENCY_ID"];
 
 
 //// ================================== ჩემი ჩამატებული ===============================///////////
@@ -987,7 +993,7 @@ if(!empty($htmlEditorConfigs))
                 }else if(buttonIds && buttonIds.includes("bp_starter")){
                        
                 }else{	
-					console.log(buttonIds);
+					// console.log(buttonIds);
 					buttonIds=eachButtonContainer.children[i].style.setProperty('display', 'none', 'important');
                 }
             }
@@ -1018,6 +1024,11 @@ if(!empty($htmlEditorConfigs))
 	background-color: #dddddd;
 	}
 
+	.seperator{
+		width:100%;
+		height:25px;
+	}
+
 	.gadaxdebi{
 		/* display:flex; */
 		align-content:center;
@@ -1031,61 +1042,220 @@ if(!empty($htmlEditorConfigs))
 
 
 <script>
+
+	pathname 	= window.location.pathname.split("/");
+
+	if(pathname[1] == "crm" && pathname[2] == "deal" && pathname[3] == "details"){
+		
     
-	let gadaxdeb = <?php echo json_encode($gadaxdeb); ?>;
-	
-	console.log(gadaxdeb);
+		let gadaxdeb = <?php echo json_encode($gadaxdeb); ?>;
+		let price = <?php echo json_encode($price); ?>;
+		let valuta = <?php echo json_encode($valuta); ?>;
 
-	let gadaxdebiDIV=
-	`<div class="gadaxdebi">
-		<h1>გადახდები</h1>
-		<div id="gadaxdebiTable"></div>
-	</div>`;
-
-	let gadaxdaTable='';
-
-	if(gadaxdeb){
-		 gadaxdaTable+=`<table>
-			<tr>
-				<th>თარიღი</th>
-				<th>თანხა</th>
-			</tr>
-		`;
+		console.log(price);
+		console.log(valuta);
 		
-		for (let i = 0; i < gadaxdeb.length; i++) {
+		let gadaxdebiDIV=
+		`<div class="gadaxdebi">
+			<h1>გადახდები</h1>
+			<div class = "seperator"></div>
+			<div  onclick="showAddPayment();" class="webform-small-button webform-small-button-transparent">გადახდის დამატება</div>
+			<div class = "seperator"></div>
+			<div id="gadaxdebiTable"></div>
+			<div class = "seperator"></div>
+			<div id="darcheniliGadaxda"></div>
+		</div>`;
 
-			gadaxdaTable+=`
-			<tr>
-				<td>${gadaxdeb[i]["DATE"]}</td>
-				<td>${gadaxdeb[i]["MONEY"]}</td>
-			</tr>`;
-		
+
+
 			
+		let addPaymentContainer = `
+		<div id="addPaymentContainer" style="position: absolute; left: 25%; top: 15%; z-index: 1000; width: 600px; padding: 0 20px 0; background-color: #fff;">
+				<div style="height: 49px;">
+					<span class="popup-window-titlebar-text">საწყობის ცვლილება</span>
+				</div>
+				<div style="overflow-x: auto; padding: 20px; background-color: #eef2f4;">
+					<div>
+						<div class="bizproc-item bizproc-workflow-template" style="border: 1px solid #D8D8D8; padding: 0 1.5em 1.5em 1em;">
+							<span class="bizproc-item-legend bizproc-workflow-template-title" style="padding: 0 1em; margin-left: 2em; font-size: 110%; color: #000000; position: absolute; top: 61px; background: #eef2f4;">საწყობის ცვლილება</span>
+							<div class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
+								
+							<div   id="priceDiv" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
+								<span style="display: block; margin: 0 0 15px 0; font-size: 13px; color: #80868e;">
+									თარიღი:
+								</span>
+								<div>
+									<input id="paymentDate" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="date" />
+								</div>
+							</div>	
+							<div   id="priceDivGel" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
+								<span style="display: block; margin: 0 0 15px 0; font-size: 13px; color: #80868e;">
+									თანხა: ${valuta}
+								</span>
+								<div>
+									<input id="paymentValue" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="number" />
+								</div>
+							</div>	
+							</div>
+						</div>
+					</div>
+					<div id="prodChangeSuccessBlock" style="display: none; color: green; text-align: center; margin: 15px 0 5px; font-size: 16px;">თქვენი მოთხოვნა გაგზავნილია</div>
+					<div id="prodChangeFailBlock" style="display: none; color: red; text-align: center; margin: 15px 0 5px; font-size: 16px;">მოთხვონის დროს დაფიქსირდა შეცდომა</div>
+					<div id="addPaymentWarningBlock" style="display: none; color: red; text-align: center; margin: 15px 0 5px; font-size: 16px;">გთხოვთ შეავსოთ ყველა ველი</div>
+				</div>
+				<span onclick="removeAddPayment();" class="popup-window-close-icon popup-window-titlebar-close-icon"></span>
+				<div style="text-align: center; padding: 20px 0 10px; position: relative;">
+					<span id="saveAddPaymentBtn" onclick="saveAddPayment()" class="popup-window-button" style="background: #bbed21;-webkit-box-shadow: none; box-shadow: none; color: #535c69;">შენახვა</span>
+					<span onclick="removeAddPayment();" class="popup-window-button" style="margin-right: 0; color: #f1361b; border-bottom-color: #ffb4a9">გაუქმება</span>
+				</div>
+			</div>
+		`;
+
+
+
+
+
+
+		let gadaxdaTable='';
+		let darcheniliGadaxda='';
+
+		if(gadaxdeb && gadaxdeb.length>0){
+			gadaxdaTable+=`<table>
+				<tr>
+					<th>თარიღი</th>
+					<th>თანხა</th>
+				</tr>
+			`;
+			
+			for (let i = 0; i < gadaxdeb.length; i++) {
+
+				gadaxdaTable+=`
+				<tr>
+					<td>${gadaxdeb[i]["DATE"]}</td>
+					<td>${gadaxdeb[i]["MONEY"]}</td>
+				</tr>`;
+			
+				
+			}
+
+			gadaxdaTable+=`</table>`;
 		}
 
-		gadaxdaTable+=`</table>`;
+		mainDiv =document.querySelector('[data-tab-id="main"]'); 
+		if(mainDiv){
+			mainDiv.style.display="flex";
+			mainDiv.style.gap="2rem";
+			mainDiv.innerHTML+=`${gadaxdebiDIV}`;
+		}
+
+		
+		rightSide =document.querySelector(".crm-entity-stream-container"); 
+		if(rightSide){
+			rightSide.style.display="none";
+		}
+
+		gadaxdebiTableDiv =document.getElementById("gadaxdebiTable"); 
+		if(gadaxdebiTableDiv){
+			gadaxdebiTableDiv.innerHTML=gadaxdaTable;
+		}
+
+
+		if(price){
+			darcheniliGadaxda=`<p>სულ გადასახდელი: ${price}</p>`;
+			if(gadaxdeb && gadaxdeb.length>0){
+				ukveGadaxdili=0;
+				for (let i = 0; i < gadaxdeb.length; i++) {
+					ukveGadaxdili+=gadaxdeb[i]["MONEY"];
+				}
+				darchenili=price-ukveGadaxdili;
+				darcheniliGadaxda+=`<p>დარჩენილი გადახდა: ${darchenili}</p>`;
+			}
+		}
+
+
+		darhceniliGadaxdaDiv =document.getElementById("darcheniliGadaxda"); 
+		if(darhceniliGadaxdaDiv){
+			darhceniliGadaxdaDiv.innerHTML=darcheniliGadaxda;
+		}
+		
+		function showAddPayment() {
+			let templateContainer = document.querySelector(".template-bitrix24");
+			$(templateContainer).append(addPaymentContainer);      
+		}
+
+
+		function removeAddPayment() {
+			let addPaymentContainer = document.getElementById("addPaymentContainer");
+			let templateContainer = document.querySelector(".template-bitrix24");
+
+			templateContainer.removeChild(addPaymentContainer);
+		}
+
+
+		function saveAddPayment() {
+				
+			let paymentDate = document.getElementById("paymentDate").value;
+			let paymentValue = document.getElementById("paymentValue").value;
+
+			if(!paymentDate || !paymentValue){
+				let error = document.getElementById("addPaymentWarningBlock").style.display="block";
+			}
+
+			console.log(paymentDate);
+			console.log(paymentValue);
+			if(paymentDate && paymentValue) {
+
+				let params = {};
+
+				params["paymentDate"] = paymentDate;
+				params["paymentValue"] = paymentValue;
+				params["dealID"]=pathname[4];
+				
+
+				console.log(params);
+			
+				post_fetch(`${location.origin}/rest/local/createPayment.php`, {"params":params})
+				.then(data => {
+				    return data.json();
+				})
+				.then(data => {
+				    console.log(data);
+				})
+				.catch(err => {
+				    console.log(err);
+				 });
+				
+
+				location.href=`http://213.131.35.178:62100/crm/deal/details/${pathname[4]}/`;
+				
+			}
+		}
+
 	}
 
-	mainDiv =document.querySelector('[data-tab-id="main"]'); 
-    if(mainDiv){
-		mainDiv.style.display="flex";
-		mainDiv.style.gap="2rem";
-		mainDiv.innerHTML+=`${gadaxdebiDIV}`;
-    }
-
 	
-	rightSide =document.querySelector(".crm-entity-stream-container"); 
-    if(rightSide){
-        rightSide.style.display="none";
-    }
-
-	gadaxdebiTableDiv =document.getElementById("gadaxdebiTable"); 
-    if(gadaxdebiTableDiv){
-        gadaxdebiTableDiv.innerHTML=gadaxdaTable;
-    }
 
 
-	
+
+
+
+
+	async function post_fetch(url, data = {}) {
+		const response = await fetch(url, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify(data)
+		});
+		return response;
+	}
+
 
 
 
