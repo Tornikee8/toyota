@@ -1034,6 +1034,11 @@ if(!empty($htmlEditorConfigs))
 		align-content:center;
 	}
 
+	.crm-entity-section-info{
+		display:flex;
+		gap:2rem;
+	}
+
 </style>
 
 
@@ -1141,10 +1146,18 @@ if(!empty($htmlEditorConfigs))
 
 		mainDiv =document.querySelector('[data-tab-id="main"]'); 
 		if(mainDiv){
-			mainDiv.style.display="flex";
-			mainDiv.style.gap="2rem";
 			mainDiv.innerHTML+=`${gadaxdebiDIV}`;
 		}
+
+		setInterval(() => {
+			addButton =document.querySelector('[data-tab-id="tab_lists_18"]').children[0]; 
+			if(addButton){
+				addButton.style.display="none";
+			}
+		}, 100);
+		
+
+		
 
 		
 		rightSide =document.querySelector(".crm-entity-stream-container"); 
@@ -1160,7 +1173,8 @@ if(!empty($htmlEditorConfigs))
 
 		if(price){
 
-			price = price-0;
+			price = Number(price)
+
 			let priceFormated = price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 			darcheniliGadaxda=`<p>სულ გადასახდელი: ${priceFormated}  ${valuta}</p>`;
@@ -1168,9 +1182,9 @@ if(!empty($htmlEditorConfigs))
 			if(gadaxdeb && gadaxdeb.length>0){
 				ukveGadaxdili=0;
 				for (let i = 0; i < gadaxdeb.length; i++) {
-					ukveGadaxdili+=gadaxdeb[i]["MONEY"];
+					ukveGadaxdili+=Number(gadaxdeb[i]["MONEY"]);
 				}
-				darchenili=price-ukveGadaxdili;
+				darchenili=price-ukveGadaxdili;				
 				let darcheniliFormated = darchenili.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 				darcheniliGadaxda+=`<p>დარჩენილი გადახდა: ${darcheniliFormated}  ${valuta}</p>`;
