@@ -42,7 +42,7 @@ $configIconID = '';
 
 function getDealsByFilter_CRM_ENTITY($arFilter, $arSelect = array(), $arSort = array("ID"=>"DESC")) {
     $arDeals = array();
-	$arSelect=array("ID","CURRENCY_ID","OPPORTUNITY");
+	$arSelect=array("ID","CURRENCY_ID","OPPORTUNITY","STAGE_ID");
     $res = CCrmDeal::GetList($arSort, $arFilter, $arSelect);
     while($arDeal = $res->Fetch()) array_push($arDeals, $arDeal);
     return (count($arDeals) > 0) ? $arDeals : false;
@@ -103,6 +103,7 @@ $gadaxdeb=$allGadaxda;
 $price=$deal[0]["OPPORTUNITY"];
 $valuta=$deal[0]["CURRENCY_ID"];
 
+$currentStage=$deal[0]["STAGE_ID"];
 
 //// ================================== ჩემი ჩამატებული ===============================///////////
 
@@ -1059,7 +1060,7 @@ if(!empty($htmlEditorConfigs))
 
 		
 		let gadaxdebiDIV=
-		`<div class="gadaxdebi">
+		`<div class="gadaxdebi" id="gadaxdebiDiv">
 			<h1>გადახდები</h1>
 			<div class = "seperator"></div>
 			<div  onclick="showAddPayment();" class="webform-small-button webform-small-button-transparent" style="background-color:silver">გადახდის დამატება</div>
@@ -1144,10 +1145,14 @@ if(!empty($htmlEditorConfigs))
 			gadaxdaTable+=`</table>`;
 		}
 
-		mainDiv =document.querySelector('[data-tab-id="main"]'); 
-		if(mainDiv){
+		mainDiv =document.querySelector('[data-tab-id="main"]');
+		createdGadaxdebiDiv=document.getElementById("gadaxdebiDiv");
+		 
+		if(mainDiv && !createdGadaxdebiDiv){
 			mainDiv.innerHTML+=`${gadaxdebiDIV}`;
+			
 		}
+		
 
 		setInterval(() => {
 			addButton =document.querySelector('[data-tab-id="tab_lists_18"]').children[0]; 
@@ -1155,10 +1160,31 @@ if(!empty($htmlEditorConfigs))
 				addButton.style.display="none";
 			}
 		}, 100);
-		
+
 
 		
+		let currentStage = <?php echo json_encode($currentStage); ?>;
 
+		if(currentStage == "WON"){
+			let invoicePopupInterval = setInterval(() => {
+
+				docPopupID=`popup-window-content-menu-popup-toolbar_deal_details_${pathname[4]}_document_menu`;
+				
+				popupDiv=document.getElementById(docPopupID);
+				if(popupDiv){
+					clearInterval(invoicePopupInterval);
+					for (let i = 0; i < popupDiv.children[0].children[0].children.length; i++) {
+						if(popupDiv.children[0].children[0].children[i].children[1]){
+							if(popupDiv.children[0].children[0].children[i].children[1].textContent !="Documents"){
+								popupDiv.children[0].children[0].children[i].style.display="none";
+							}
+						}		
+					}
+				}
+			}, 100);
+		}
+		
+		
 		
 		rightSide =document.querySelector(".crm-entity-stream-container"); 
 		if(rightSide){

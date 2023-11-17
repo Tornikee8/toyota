@@ -117,7 +117,7 @@ setInterval(() => {
 
 
 
-            if(filter.children[i].getAttribute("title") == 'Section: .Internal Stock' || filter.children[i].getAttribute("title") ==  'Section: .კავკასიის საწყობი'){
+            if(filter.children[i].getAttribute("title") == 'Section: .Internal Stock' || filter.children[i].getAttribute("title") ==  'Section: .კავკასიის საწყობი' || filter.children[i].getAttribute("title") ==  'Section: .მეორადი ავტოები'){
                 showCreateDeal = "YES";
             }
         }
