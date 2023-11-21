@@ -1197,6 +1197,40 @@ if(!empty($htmlEditorConfigs))
 					}
 				}
 			}, 100);
+		}else{
+
+			let InvoicePopupByValuta = setInterval(() => {
+
+			docPopupID=`popup-window-content-menu-popup-toolbar_deal_details_${pathname[4]}_document_menu`;
+
+			popupDiv=document.getElementById(docPopupID);
+			if(popupDiv){
+				clearInterval(InvoicePopupByValuta);
+				for (let i = 0; i < popupDiv.children[0].children[0].children.length; i++) {
+					if(popupDiv.children[0].children[0].children[i].children[1]){
+						docName=popupDiv.children[0].children[0].children[i].children[1].textContent;
+						if(price > 0){
+							if(valuta == "USD"){
+								if(docName !="Documents" && docName !="TBC invoice - აშშ" && docName !="BOG Invoice - აშშ" && docName !="ხელშეკრულება" && docName !="ხელშეკრულება   LTD" && docName !="ხელშეკრულება FORTUNER" ){
+									popupDiv.children[0].children[0].children[i].style.display="none";
+								}
+					
+							}else if(valuta == "GEL"){
+								if(docName !="Documents" && docName !="TBC invoice" && docName !="BOG Invoice" && docName !="ხელშეკრულება" && docName !="ხელშეკრულება   LTD" && docName !="ხელშეკრულება FORTUNER" ){
+									popupDiv.children[0].children[0].children[i].style.display="none";
+								}
+							}
+						}else{
+							if(docName !="Documents" ){
+								popupDiv.children[0].children[0].children[i].style.display="none";
+							}
+						}
+						
+					}		
+				}
+			}
+			}, 200);
+			
 		}
 		
 		
