@@ -96,6 +96,16 @@ $deal=getDealsByFilter_CRM_ENTITY($arFilter);
 
 
 
+$prods = CCrmDeal::LoadProductRows($deal_ID);
+
+$prodID=$prods[0]["PRODUCT_ID"];
+
+$arFilter = array(
+    "ID" => $prodID,
+);
+
+$product = getCIBlockElementsByFilter_CRM_ENTITY($arFilter);
+
 
 
 
@@ -104,6 +114,7 @@ $price=$deal[0]["OPPORTUNITY"];
 $valuta=$deal[0]["CURRENCY_ID"];
 
 $currentStage=$deal[0]["STAGE_ID"];
+$recomendPrice=$product[0]["recomendedPrice"];
 
 //// ================================== ჩემი ჩამატებული ===============================///////////
 
@@ -1164,6 +1175,10 @@ if(!empty($htmlEditorConfigs))
 
 		
 		let currentStage = <?php echo json_encode($currentStage); ?>;
+				
+	
+
+		
 
 		if(currentStage == "WON"){
 			let invoicePopupInterval = setInterval(() => {
@@ -1188,7 +1203,7 @@ if(!empty($htmlEditorConfigs))
 		
 		rightSide =document.querySelector(".crm-entity-stream-container"); 
 		if(rightSide){
-			rightSide.style.display="none";
+			// rightSide.style.display="none";
 		}
 
 		gadaxdebiTableDiv =document.getElementById("gadaxdebiTable"); 
@@ -1279,6 +1294,21 @@ if(!empty($htmlEditorConfigs))
 	}
 
 	
+
+
+	let recomendPrice = <?php echo json_encode($recomendPrice); ?>;
+
+	setInterval(() => {
+
+		let runWorkflowPopup=document.getElementById("bp-starter-parameters-popup-1");
+		if(runWorkflowPopup){
+			workflowName = runWorkflowPopup.children[0].children[0].textContent;
+			if(workflowName == "გარიგების ფასის განსაზღვრა"){
+				runWorkflowPopup.children[0].children[0].innerHTML = `<span>${workflowName} <span style="color:red;">სარეკომენდაციო ფასი: ${recomendPrice}</span></span>`;
+			}
+		}
+	
+	}, 1000);
 
 
 
