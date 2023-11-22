@@ -1330,7 +1330,7 @@ if(!empty($htmlEditorConfigs))
 	
 
 
-	let recomendPrice = <?php echo json_encode($recomendPrice); ?>;
+	 recomendPrice = <?php echo json_encode($recomendPrice); ?>;
 
 	setInterval(() => {
 
