@@ -1325,28 +1325,71 @@ if(!empty($htmlEditorConfigs))
 			}
 		}
 
+
+
+
+
+		
+		////// ბიზნეს პროცესები //////////////////////////
+
+
+		recomendPrice = <?php echo json_encode($recomendPrice); ?>;
+
+		setInterval(() => {
+
+			let runWorkflowPopup=document.getElementById("bp-starter-parameters-popup-1");
+			if(runWorkflowPopup){
+				workflowName = runWorkflowPopup.children[0].children[0].textContent;
+				if(workflowName == "გარიგების ფასის განსაზღვრა"){
+					runWorkflowPopup.children[0].children[0].innerHTML = `<span>${workflowName} <span style="color:red;">სარეკომენდაციო ფასი: ${recomendPrice}</span></span>`;
+				}
+			}
+
+		}, 1000);
+
+			
+
+		if(!price){
+			let workflowButtons = setInterval(() => {
+
+				workflowPopup=document.getElementById("popup-window-content-menu-popup-bp-starter-tpl-menu-1");
+				if(workflowPopup){
+					clearInterval(workflowButtons);
+					workflowPopup.children[0].children[0].children[1].style.display="none";
+					// console.log(workflowPopup.children[0].children[0].children[1]);
+				}
+			}, 200);
+		}
+
+
+
+		/////// სავალდებულო ველების ფორმატები //////
+
+
+
+		setInterval(() => {
+			saveBtn=document.querySelector(".crm-entity-popup-fill-required-fields-btns");
+			if(saveBtn){
+				pnInput=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[0].children[2].children[0].children[0].children[0].value;
+				mailInpit=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[2].children[2].children[0].children[0].children[0].value;
+
+				emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+				let isValidEmail1 = emailRegex.test(mailInpit);
+
+				if(pnInput.length == 11 && Number(pnInput) && isValidEmail1){
+					saveBtn.children[0].style.display="";				
+				}else{
+					saveBtn.children[0].style.display="none";
+				}
+
+			}
+
+		}, 420);
+
 	}
 
 	
-
-
-	 recomendPrice = <?php echo json_encode($recomendPrice); ?>;
-
-	setInterval(() => {
-
-		let runWorkflowPopup=document.getElementById("bp-starter-parameters-popup-1");
-		if(runWorkflowPopup){
-			workflowName = runWorkflowPopup.children[0].children[0].textContent;
-			if(workflowName == "გარიგების ფასის განსაზღვრა"){
-				runWorkflowPopup.children[0].children[0].innerHTML = `<span>${workflowName} <span style="color:red;">სარეკომენდაციო ფასი: ${recomendPrice}</span></span>`;
-			}
-		}
-	
-	}, 1000);
-
-
-
-
 
 
 	async function post_fetch(url, data = {}) {
@@ -1364,35 +1407,6 @@ if(!empty($htmlEditorConfigs))
 		});
 		return response;
 	}
-
-
-
-	/////// სავალდებულო ველების ფორმატები //////
-
-
-
-	
-
-	setInterval(() => {
-		saveBtn=document.querySelector(".crm-entity-popup-fill-required-fields-btns");
-		if(saveBtn){
-			pnInput=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[0].children[2].children[0].children[0].children[0].value;
-			mailInpit=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[2].children[2].children[0].children[0].children[0].value;
-
-			emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-			let isValidEmail1 = emailRegex.test(mailInpit);
-
-			if(pnInput.length == 11 && Number(pnInput) && isValidEmail1){
-				saveBtn.children[0].style.display="";				
-			}else{
-				saveBtn.children[0].style.display="none";
-			}
-
-		}
-
-	}, 420);
-
 
 
 

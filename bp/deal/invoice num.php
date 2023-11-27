@@ -132,7 +132,7 @@ if(!$prodDeal){
     $Product[0]["Invoice_num"] = $invoiceNums;
     $Product[0]["CLIENTS"] = $contacts;
     $Product[0]["deal_history"] = $dealHistory;
-    $Product[0]["deal_status"] = 87;
+    // $Product[0]["deal_status"] = 87;
 
     $arLoadProductArray = array(
         "PROPERTY_VALUES" => $Product[0],
