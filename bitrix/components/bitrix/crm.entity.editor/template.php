@@ -1367,5 +1367,33 @@ if(!empty($htmlEditorConfigs))
 
 
 
+	/////// სავალდებულო ველების ფორმატები //////
+
+
+
+	
+
+	setInterval(() => {
+		saveBtn=document.querySelector(".crm-entity-popup-fill-required-fields-btns");
+		if(saveBtn){
+			pnInput=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[0].children[2].children[0].children[0].children[0].value;
+			mailInpit=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[2].children[2].children[0].children[0].children[0].value;
+
+			emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+			let isValidEmail1 = emailRegex.test(mailInpit);
+
+			if(pnInput.length == 11 && Number(pnInput) && isValidEmail1){
+				saveBtn.children[0].style.display="";				
+			}else{
+				saveBtn.children[0].style.display="none";
+			}
+
+		}
+
+	}, 420);
+
+
+
 
 </script>
