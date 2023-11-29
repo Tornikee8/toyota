@@ -49,6 +49,9 @@ if($Product[0]['ID']){
     }elseif($Product[0]["deal_status"] == "კალკულაციის მოლოდინში"){
         $Product[0]["deal_status"] = 88;
     }
+    elseif($Product[0]["deal_status"] == "დაინტერესებული"){
+        $Product[0]["deal_status"] = 90;
+    }
       
 
 

@@ -38,7 +38,7 @@ foreach($prods as $prod){
     $ProductID=$Product[0]["ID"];
 
     $Product[0]["DEAL"] = $deal_ID;
-    $Product[0]["deal_status"] = 88;
+    $Product[0]["deal_status"] = 87;
 
 
     $arLoadProductArray = array(

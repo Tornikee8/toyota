@@ -166,6 +166,11 @@ setInterval(() => {
                         for (let i = 0; i < colums[j].children.length; i++) {
                             colums[j].children[i].style.background='orange';                            
                         }
+                    }else if(statusValue == 'დაინტერესებული'){
+
+                        for (let i = 0; i < colums[j].children.length; i++) {
+                            colums[j].children[i].style.background='#2eceff';                            
+                        }
                     }
 
                     if(dealLink?.children?.length){

@@ -116,6 +116,8 @@ $valuta=$deal[0]["CURRENCY_ID"];
 $currentStage=$deal[0]["STAGE_ID"];
 $recomendPrice=$product[0]["recomendedPrice"];
 
+
+
 //// ================================== ჩემი ჩამატებული ===============================///////////
 
 
@@ -1068,101 +1070,115 @@ if(!empty($htmlEditorConfigs))
 		let gadaxdeb = <?php echo json_encode($gadaxdeb); ?>;
 		let price = <?php echo json_encode($price); ?>;
 		let valuta = <?php echo json_encode($valuta); ?>;
+		let deal = <?php echo json_encode($deal); ?>;
+		let currentStage = <?php echo json_encode($currentStage); ?>;
 
-		
-		let gadaxdebiDIV=
-		`<div class="gadaxdebi" id="gadaxdebiDiv">
-			<h1>გადახდები</h1>
-			<div class = "seperator"></div>
-			<div  onclick="showAddPayment();" class="webform-small-button webform-small-button-transparent" style="background-color:silver">გადახდის დამატება</div>
-			<div class = "seperator"></div>
-			<div id="gadaxdebiTable"></div>
-			<div class = "seperator"></div>
-			<div id="darcheniliGadaxda"></div>
-		</div>`;
+		stageArr=currentStage.split(":");
 
 
+		if(stageArr[0] !="C1"){
+			let gadaxdebiDIV=
+			`<div class="gadaxdebi" id="gadaxdebiDiv">
+				<h1>გადახდები</h1>
+				<div class = "seperator"></div>
+				<div  onclick="showAddPayment();" class="webform-small-button webform-small-button-transparent" style="background-color:silver">გადახდის დამატება</div>
+				<div class = "seperator"></div>
+				<div id="gadaxdebiTable"></div>
+				<div class = "seperator"></div>
+				<div id="darcheniliGadaxda"></div>
+			</div>`;
 
-			
-		let addPaymentContainer = `
-		<div id="addPaymentContainer" style="position: absolute; left: 25%; top: 15%; z-index: 1000; width: 600px; padding: 0 20px 0; background-color: #fff;">
-				<div style="height: 49px;">
-					<span class="popup-window-titlebar-text">საწყობის ცვლილება</span>
-				</div>
-				<div style="overflow-x: auto; padding: 20px; background-color: #eef2f4;">
-					<div>
-						<div class="bizproc-item bizproc-workflow-template" style="border: 1px solid #D8D8D8; padding: 0 1.5em 1.5em 1em;">
-							<span class="bizproc-item-legend bizproc-workflow-template-title" style="padding: 0 1em; margin-left: 2em; font-size: 110%; color: #000000; position: absolute; top: 61px; background: #eef2f4;">საწყობის ცვლილება</span>
-							<div class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
-								
-							<div   id="priceDiv" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
-								<span style="display: block; margin: 0 0 15px 0; font-size: 13px; color: #80868e;">
-									თარიღი:
-								</span>
-								<div>
-									<input id="paymentDate" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="date" />
+
+
+				
+			let addPaymentContainer = `
+			<div id="addPaymentContainer" style="position: absolute; left: 25%; top: 15%; z-index: 1000; width: 600px; padding: 0 20px 0; background-color: #fff;">
+					<div style="height: 49px;">
+						<span class="popup-window-titlebar-text">საწყობის ცვლილება</span>
+					</div>
+					<div style="overflow-x: auto; padding: 20px; background-color: #eef2f4;">
+						<div>
+							<div class="bizproc-item bizproc-workflow-template" style="border: 1px solid #D8D8D8; padding: 0 1.5em 1.5em 1em;">
+								<span class="bizproc-item-legend bizproc-workflow-template-title" style="padding: 0 1em; margin-left: 2em; font-size: 110%; color: #000000; position: absolute; top: 61px; background: #eef2f4;">საწყობის ცვლილება</span>
+								<div class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
+									
+								<div   id="priceDiv" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
+									<span style="display: block; margin: 0 0 15px 0; font-size: 13px; color: #80868e;">
+										თარიღი:
+									</span>
+									<div>
+										<input id="paymentDate" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="date" />
+									</div>
+								</div>	
+								<div   id="priceDivGel" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
+									<span style="display: block; margin: 0 0 15px 0; font-size: 13px; color: #80868e;">
+										თანხა: ${valuta}
+									</span>
+									<div>
+										<input id="paymentValue" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="number" />
+									</div>
+								</div>	
 								</div>
-							</div>	
-							<div   id="priceDivGel" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
-								<span style="display: block; margin: 0 0 15px 0; font-size: 13px; color: #80868e;">
-									თანხა: ${valuta}
-								</span>
-								<div>
-									<input id="paymentValue" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="number" />
-								</div>
-							</div>	
 							</div>
 						</div>
+						<div id="prodChangeSuccessBlock" style="display: none; color: green; text-align: center; margin: 15px 0 5px; font-size: 16px;">თქვენი მოთხოვნა გაგზავნილია</div>
+						<div id="prodChangeFailBlock" style="display: none; color: red; text-align: center; margin: 15px 0 5px; font-size: 16px;">მოთხვონის დროს დაფიქსირდა შეცდომა</div>
+						<div id="addPaymentWarningBlock" style="display: none; color: red; text-align: center; margin: 15px 0 5px; font-size: 16px;">გთხოვთ შეავსოთ ყველა ველი</div>
 					</div>
-					<div id="prodChangeSuccessBlock" style="display: none; color: green; text-align: center; margin: 15px 0 5px; font-size: 16px;">თქვენი მოთხოვნა გაგზავნილია</div>
-					<div id="prodChangeFailBlock" style="display: none; color: red; text-align: center; margin: 15px 0 5px; font-size: 16px;">მოთხვონის დროს დაფიქსირდა შეცდომა</div>
-					<div id="addPaymentWarningBlock" style="display: none; color: red; text-align: center; margin: 15px 0 5px; font-size: 16px;">გთხოვთ შეავსოთ ყველა ველი</div>
+					<span onclick="removeAddPayment();" class="popup-window-close-icon popup-window-titlebar-close-icon"></span>
+					<div style="text-align: center; padding: 20px 0 10px; position: relative;">
+						<span id="saveAddPaymentBtn" onclick="saveAddPayment()" class="popup-window-button" style="background: #bbed21;-webkit-box-shadow: none; box-shadow: none; color: #535c69;">შენახვა</span>
+						<span onclick="removeAddPayment();" class="popup-window-button" style="margin-right: 0; color: #f1361b; border-bottom-color: #ffb4a9">გაუქმება</span>
+					</div>
 				</div>
-				<span onclick="removeAddPayment();" class="popup-window-close-icon popup-window-titlebar-close-icon"></span>
-				<div style="text-align: center; padding: 20px 0 10px; position: relative;">
-					<span id="saveAddPaymentBtn" onclick="saveAddPayment()" class="popup-window-button" style="background: #bbed21;-webkit-box-shadow: none; box-shadow: none; color: #535c69;">შენახვა</span>
-					<span onclick="removeAddPayment();" class="popup-window-button" style="margin-right: 0; color: #f1361b; border-bottom-color: #ffb4a9">გაუქმება</span>
-				</div>
-			</div>
-		`;
-
-
-
-
-
-
-		let gadaxdaTable='';
-		let darcheniliGadaxda='';
-
-		if(gadaxdeb && gadaxdeb.length>0){
-			gadaxdaTable+=`<table>
-				<tr>
-					<th>თარიღი</th>
-					<th>თანხა (${valuta})</th>
-				</tr>
 			`;
-			
-			for (let i = 0; i < gadaxdeb.length; i++) {
 
-				gadaxdaTable+=`
-				<tr>
-					<td>${gadaxdeb[i]["DATE"]}</td>
-					<td>${gadaxdeb[i]["MONEY"]}</td>
-				</tr>`;
-			
+
+
+
+
+
+			let gadaxdaTable='';
+			let darcheniliGadaxda='';
+
+			if(gadaxdeb && gadaxdeb.length>0){
+				gadaxdaTable+=`<table>
+					<tr>
+						<th>თარიღი</th>
+						<th>თანხა (${valuta})</th>
+					</tr>
+				`;
 				
+				for (let i = 0; i < gadaxdeb.length; i++) {
+
+					gadaxdaTable+=`
+					<tr>
+						<td>${gadaxdeb[i]["DATE"]}</td>
+						<td>${gadaxdeb[i]["MONEY"]}</td>
+					</tr>`;
+				
+					
+				}
+
+				gadaxdaTable+=`</table>`;
 			}
 
-			gadaxdaTable+=`</table>`;
+			mainDiv =document.querySelector('[data-tab-id="main"]');
+			createdGadaxdebiDiv=document.getElementById("gadaxdebiDiv");
+			
+			if(mainDiv && !createdGadaxdebiDiv){
+				mainDiv.innerHTML+=`${gadaxdebiDIV}`;
+				
+			}
+			
+			gadaxdebiTableDiv =document.getElementById("gadaxdebiTable"); 
+			if(gadaxdebiTableDiv){
+				gadaxdebiTableDiv.innerHTML=gadaxdaTable;
+			}
 		}
 
-		mainDiv =document.querySelector('[data-tab-id="main"]');
-		createdGadaxdebiDiv=document.getElementById("gadaxdebiDiv");
-		 
-		if(mainDiv && !createdGadaxdebiDiv){
-			mainDiv.innerHTML+=`${gadaxdebiDIV}`;
-			
-		}
+
+
 		
 
 		setInterval(() => {
@@ -1174,7 +1190,7 @@ if(!empty($htmlEditorConfigs))
 
 
 		
-		let currentStage = <?php echo json_encode($currentStage); ?>;
+
 				
 	
 
@@ -1240,10 +1256,6 @@ if(!empty($htmlEditorConfigs))
 			// rightSide.style.display="none";
 		}
 
-		gadaxdebiTableDiv =document.getElementById("gadaxdebiTable"); 
-		if(gadaxdebiTableDiv){
-			gadaxdebiTableDiv.innerHTML=gadaxdaTable;
-		}
 
 
 		if(price){

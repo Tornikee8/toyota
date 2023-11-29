@@ -128,11 +128,11 @@ if(!$prodDeal){
     }
 
 
-    $Product[0]["DEAL"] = $deal_ID;
+    // $Product[0]["DEAL"] = $deal_ID;  დაინტერესებულზე ბევრის შექმნა შეეძლოთ
     $Product[0]["Invoice_num"] = $invoiceNums;
     $Product[0]["CLIENTS"] = $contacts;
     $Product[0]["deal_history"] = $dealHistory;
-    // $Product[0]["deal_status"] = 87;
+    $Product[0]["deal_status"] = 90;
 
     $arLoadProductArray = array(
         "PROPERTY_VALUES" => $Product[0],
