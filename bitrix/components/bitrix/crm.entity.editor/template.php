@@ -42,7 +42,7 @@ $configIconID = '';
 
 function getDealsByFilter_CRM_ENTITY($arFilter, $arSelect = array(), $arSort = array("ID"=>"DESC")) {
     $arDeals = array();
-	$arSelect=array("ID","CURRENCY_ID","OPPORTUNITY","STAGE_ID");
+	$arSelect=array("ID","CURRENCY_ID","OPPORTUNITY","STAGE_ID","UF_CRM_1701270482886");
     $res = CCrmDeal::GetList($arSort, $arFilter, $arSelect);
     while($arDeal = $res->Fetch()) array_push($arDeals, $arDeal);
     return (count($arDeals) > 0) ? $arDeals : false;
@@ -111,7 +111,15 @@ $product = getCIBlockElementsByFilter_CRM_ENTITY($arFilter);
 
 $gadaxdeb=$allGadaxda;
 $price=$deal[0]["OPPORTUNITY"];
-$valuta=$deal[0]["CURRENCY_ID"];
+
+if($deal[0]["UF_CRM_1701270482886"] == 37){
+	$valuta="GEL";
+}elseif($deal[0]["UF_CRM_1701270482886"] == 38){
+	$valuta="USD";
+}else{
+	$valuta=$deal[0]["UF_CRM_1701270482886"];
+}
+
 
 $currentStage=$deal[0]["STAGE_ID"];
 $recomendPrice=$product[0]["recomendedPrice"];
@@ -1073,6 +1081,8 @@ if(!empty($htmlEditorConfigs))
 		let deal = <?php echo json_encode($deal); ?>;
 		let currentStage = <?php echo json_encode($currentStage); ?>;
 
+		// console.log(valuta);
+
 		stageArr=currentStage.split(":");
 
 
@@ -1089,6 +1099,20 @@ if(!empty($htmlEditorConfigs))
 			</div>`;
 
 
+			// Get the current date
+			today = new Date();
+
+			// Extract day, month, and year components
+			day = today.getDate();
+			month = today.getMonth() + 1; // Note: Months are zero-based
+			year = today.getFullYear();
+
+			// Format day and month with leading zeros if needed
+			day = (day < 10) ? '0' + day : day;
+			month = (month < 10) ? '0' + month : month;
+
+			// Create the formatted date string
+			formattedDate = year + '-' + month + '-' + day;
 
 				
 			let addPaymentContainer = `
@@ -1107,7 +1131,7 @@ if(!empty($htmlEditorConfigs))
 										თარიღი:
 									</span>
 									<div>
-										<input id="paymentDate" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="date" />
+										<input id="paymentDate" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="date"; value=${formattedDate} />
 									</div>
 								</div>	
 								<div   id="priceDivGel" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
@@ -1135,7 +1159,7 @@ if(!empty($htmlEditorConfigs))
 
 
 
-
+		
 
 
 			let gadaxdaTable='';
@@ -1174,6 +1198,61 @@ if(!empty($htmlEditorConfigs))
 			gadaxdebiTableDiv =document.getElementById("gadaxdebiTable"); 
 			if(gadaxdebiTableDiv){
 				gadaxdebiTableDiv.innerHTML=gadaxdaTable;
+			}
+
+
+
+			function showAddPayment() {
+				let templateContainer = document.querySelector(".template-bitrix24");
+				$(templateContainer).append(addPaymentContainer);   
+			}
+
+
+			function removeAddPayment() {
+				let addPaymentContainer = document.getElementById("addPaymentContainer");
+				let templateContainer = document.querySelector(".template-bitrix24");
+
+				templateContainer.removeChild(addPaymentContainer);
+			}
+
+
+			function saveAddPayment() {
+					
+				let paymentDate = document.getElementById("paymentDate").value;
+				let paymentValue = document.getElementById("paymentValue").value;
+
+				if(!paymentDate || !paymentValue){
+					let error = document.getElementById("addPaymentWarningBlock").style.display="block";
+				}
+
+				console.log(paymentDate);
+				console.log(paymentValue);
+				if(paymentDate && paymentValue) {
+
+					let params = {};
+
+					params["paymentDate"] = paymentDate;
+					params["paymentValue"] = paymentValue;
+					params["dealID"]=pathname[4];
+					
+
+					console.log(params);
+				
+					post_fetch(`${location.origin}/rest/local/createPayment.php`, {"params":params})
+					.then(data => {
+						return data.json();
+					})
+					.then(data => {
+						console.log(data);
+					})
+					.catch(err => {
+						console.log(err);
+					});
+					
+
+					location.href=`http://213.131.35.178:62100/crm/deal/details/${pathname[4]}/`;
+					
+				}
 			}
 		}
 
@@ -1226,12 +1305,12 @@ if(!empty($htmlEditorConfigs))
 					if(popupDiv.children[0].children[0].children[i].children[1]){
 						docName=popupDiv.children[0].children[0].children[i].children[1].textContent;
 						if(price > 0){
-							if(valuta == "USD"){
+							if(valuta == "USD"){ // დოლარი
 								if(docName !="Documents" && docName !="TBC invoice - აშშ" && docName !="BOG Invoice - აშშ" && docName !="ხელშეკრულება" && docName !="ხელშეკრულება   LTD" && docName !="ხელშეკრულება FORTUNER" ){
 									popupDiv.children[0].children[0].children[i].style.display="none";
 								}
 					
-							}else if(valuta == "GEL"){
+							}else if(valuta == "GEL"){ // ლარი
 								if(docName !="Documents" && docName !="TBC invoice" && docName !="BOG Invoice" && docName !="ხელშეკრულება" && docName !="ხელშეკრულება   LTD" && docName !="ხელშეკრულება FORTUNER" ){
 									popupDiv.children[0].children[0].children[i].style.display="none";
 								}
@@ -1284,58 +1363,7 @@ if(!empty($htmlEditorConfigs))
 			darhceniliGadaxdaDiv.innerHTML=darcheniliGadaxda;
 		}
 		
-		function showAddPayment() {
-			let templateContainer = document.querySelector(".template-bitrix24");
-			$(templateContainer).append(addPaymentContainer);      
-		}
 
-
-		function removeAddPayment() {
-			let addPaymentContainer = document.getElementById("addPaymentContainer");
-			let templateContainer = document.querySelector(".template-bitrix24");
-
-			templateContainer.removeChild(addPaymentContainer);
-		}
-
-
-		function saveAddPayment() {
-				
-			let paymentDate = document.getElementById("paymentDate").value;
-			let paymentValue = document.getElementById("paymentValue").value;
-
-			if(!paymentDate || !paymentValue){
-				let error = document.getElementById("addPaymentWarningBlock").style.display="block";
-			}
-
-			console.log(paymentDate);
-			console.log(paymentValue);
-			if(paymentDate && paymentValue) {
-
-				let params = {};
-
-				params["paymentDate"] = paymentDate;
-				params["paymentValue"] = paymentValue;
-				params["dealID"]=pathname[4];
-				
-
-				console.log(params);
-			
-				post_fetch(`${location.origin}/rest/local/createPayment.php`, {"params":params})
-				.then(data => {
-				    return data.json();
-				})
-				.then(data => {
-				    console.log(data);
-				})
-				.catch(err => {
-				    console.log(err);
-				 });
-				
-
-				location.href=`http://213.131.35.178:62100/crm/deal/details/${pathname[4]}/`;
-				
-			}
-		}
 
 
 
@@ -1350,14 +1378,44 @@ if(!empty($htmlEditorConfigs))
 		setInterval(() => {
 
 			let runWorkflowPopup=document.getElementById("bp-starter-parameters-popup-1");
+
 			if(runWorkflowPopup){
+
 				workflowName = runWorkflowPopup.children[0].children[0].textContent;
+
 				if(workflowName == "გარიგების ფასის განსაზღვრა"){
-					runWorkflowPopup.children[0].children[0].innerHTML = `<span>${workflowName} <span style="color:red;">სარეკომენდაციო ფასი: ${recomendPrice}</span></span>`;
+					runWorkflowPopup.children[0].children[0].innerHTML = `<span>${workflowName} <span style="color:red;">სარეკომენდაციო ფასი: ${recomendPrice}</span></span>`;		
+				}
+
+				if (workflowName.includes( "გარიგების ფასის განსაზღვრა")){
+					workflowPopContent=runWorkflowPopup.children[1].children[0].children[11].children[0].children[5];
+
+					archeuliValuta=workflowPopContent.children[1].children[1].children[0].value;
+
+					if(!archeuliValuta){
+						workflowPopContent.children[2].style.display="none";
+						workflowPopContent.children[3].style.display="none";
+						workflowPopContent.children[4].style.display="none";
+					}else if (archeuliValuta == "ლარი"){
+						workflowPopContent.children[2].style.display="";
+						workflowPopContent.children[3].style.display="";
+						workflowPopContent.children[4].style.display="none";
+					}else if (archeuliValuta == "დოლარი"){
+						workflowPopContent.children[2].style.display="";
+						workflowPopContent.children[3].style.display="none";
+						workflowPopContent.children[4].style.display="";
+					}
+				
+					console.log(archeuliValuta)
+
+					// for (let i = 1; i < workflowPopContent.children.length; i++) {
+					// 	console.log(workflowPopContent.children[i].children[1].children[0].value);
+						
+					// }
 				}
 			}
 
-		}, 1000);
+		}, 400);
 
 			
 
@@ -1372,6 +1430,23 @@ if(!empty($htmlEditorConfigs))
 				}
 			}, 200);
 		}
+
+
+		////// დილის ველები  //////////////////
+
+
+		setInterval(() => {
+
+			let tanxaLari=document.querySelector('[data-cid="UF_CRM_1701269703698"]');
+
+			let tanxaLariInput=document.querySelector('[name="UF_CRM_1701269703698"]');
+
+
+			tanxaLari.style.fontSize ="500px";
+
+			
+		}, 700);
+
 
 
 
@@ -1400,7 +1475,7 @@ if(!empty($htmlEditorConfigs))
 		}, 420);
 
 	}
-
+    //////////////////////////////////////////////
 	
 
 
