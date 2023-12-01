@@ -38,11 +38,13 @@ $createSectionButtonID = "{$prefix}_create_section";
 $configMenuButtonID = '';
 $configIconID = '';
 
+
+
 //// ================================== ჩემი ჩამატებული ===============================///////////
 
 function getDealsByFilter_CRM_ENTITY($arFilter, $arSelect = array(), $arSort = array("ID"=>"DESC")) {
     $arDeals = array();
-	$arSelect=array("ID","CURRENCY_ID","OPPORTUNITY","STAGE_ID","UF_CRM_1701270482886");
+	$arSelect=array("ID","CURRENCY_ID","OPPORTUNITY","STAGE_ID","UF_CRM_1701270482886","UF_CRM_1701416970265");
     $res = CCrmDeal::GetList($arSort, $arFilter, $arSelect);
     while($arDeal = $res->Fetch()) array_push($arDeals, $arDeal);
     return (count($arDeals) > 0) ? $arDeals : false;
@@ -110,14 +112,18 @@ $product = getCIBlockElementsByFilter_CRM_ENTITY($arFilter);
 
 
 $gadaxdeb=$allGadaxda;
-$price=$deal[0]["OPPORTUNITY"];
 
 if($deal[0]["UF_CRM_1701270482886"] == 37){
+	$priceGel=explode("|",$deal[0]["UF_CRM_1701416970265"]);
+	$price=$priceGel[0];
 	$valuta="GEL";
 }elseif($deal[0]["UF_CRM_1701270482886"] == 38){
+	$price=$deal[0]["OPPORTUNITY"];
 	$valuta="USD";
 }else{
 	$valuta=$deal[0]["UF_CRM_1701270482886"];
+	$price=$deal[0]["OPPORTUNITY"];
+
 }
 
 
@@ -1081,7 +1087,6 @@ if(!empty($htmlEditorConfigs))
 		let deal = <?php echo json_encode($deal); ?>;
 		let currentStage = <?php echo json_encode($currentStage); ?>;
 
-		// console.log(valuta);
 
 		stageArr=currentStage.split(":");
 
@@ -1437,16 +1442,37 @@ if(!empty($htmlEditorConfigs))
 
 		setInterval(() => {
 
-			let tanxaLari=document.querySelector('[data-cid="UF_CRM_1701269703698"]');
+			let opportunityField=document.querySelector('[data-cid="OPPORTUNITY_WITH_CURRENCY"]');		
+            if(opportunityField){
+                opportunityField.parentElement.style.pointerEvents="none";
+            }
 
-			let tanxaLariInput=document.querySelector('[name="UF_CRM_1701269703698"]');
 
 
-			tanxaLari.style.fontSize ="500px";
+			tanxaLari=document.querySelector('[data-cid="UF_CRM_1701416970265"]');
 
-			
+			tanxaLariValue = <?echo $priceGel[0];?>;
+
+			// tanxaLariValue = tanxaLari.children[3].children[0].children[0].textContent;
+			// tanxaLariValue = tanxaLariValue.replace("₾", "");
+
+			tanxaLari.children[3].children[0].innerHTML=`<span style="color:#80868e; font-size:24px; line-height: 30px;font-family: var(--ui-font-family-secondary,var(--ui-font-family-open-sans)); font-weight: var(--ui-font-weight-regular,400);">₾ </span><span style="font-size:36px; ">${tanxaLariValue.toLocaleString()}</span>`;
+	
+
+			let recivePaymentButton=document.querySelector('.crm-entity-widget-content-block-inner-pay-button');
+	
+			if(recivePaymentButton){
+				recivePaymentButton.style.display="none";
+			}
+	
+
+
 		}, 700);
 
+
+	 
+
+	
 
 
 
