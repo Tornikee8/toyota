@@ -126,6 +126,10 @@ if($deal[0]["UF_CRM_1701270482886"] == 37){
 
 }
 
+if(!$deal[0]["OPPORTUNITY"] || $deal[0]["OPPORTUNITY"] == 0){
+	$price=0;
+}
+
 
 $currentStage=$deal[0]["STAGE_ID"];
 $recomendPrice=$product[0]["recomendedPrice"];
@@ -1342,13 +1346,25 @@ if(!empty($htmlEditorConfigs))
 
 
 
-		if(price){
+
+		if(price || price==0){
+
+
 
 			price = Number(price)
 
 			let priceFormated = price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-			darcheniliGadaxda=`<p>სულ გადასახდელი: ${priceFormated}  ${valuta}</p>`;
+			if(valuta){
+
+				darcheniliGadaxda=`<p>სულ გადასახდელი: ${priceFormated}  ${valuta}</p>`;
+
+			}else{
+				darcheniliGadaxda=`<p>სულ გადასახდელი: ${priceFormated}  </p>`;
+				
+			}
+
+
 
 			if(gadaxdeb && gadaxdeb.length>0){
 				ukveGadaxdili=0;
@@ -1357,6 +1373,8 @@ if(!empty($htmlEditorConfigs))
 				}
 				darchenili=price-ukveGadaxdili;				
 				let darcheniliFormated = darchenili.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+			
 
 				darcheniliGadaxda+=`<p>დარჩენილი გადახდა: ${darcheniliFormated}  ${valuta}</p>`;
 			}
@@ -1451,7 +1469,7 @@ if(!empty($htmlEditorConfigs))
 
 			tanxaLari=document.querySelector('[data-cid="UF_CRM_1701416970265"]');
 
-			tanxaLariValue = <?echo $priceGel[0];?>;
+			tanxaLariValue = <?echo $price;?> ;
 
 			// tanxaLariValue = tanxaLari.children[3].children[0].children[0].textContent;
 			// tanxaLariValue = tanxaLariValue.replace("₾", "");
