@@ -129,7 +129,8 @@ if($deal[0]["UF_CRM_1701270482886"] == 37){
 if(!$deal[0]["OPPORTUNITY"] || $deal[0]["OPPORTUNITY"] == 0){
 	$price=0;
 }
-
+$priceGel=explode("|",$deal[0]["UF_CRM_1701416970265"]);
+$priceLari = $priceGel[0];
 
 $currentStage=$deal[0]["STAGE_ID"];
 $recomendPrice=$product[0]["recomendedPrice"];
@@ -1469,7 +1470,7 @@ if(!empty($htmlEditorConfigs))
 
 			tanxaLari=document.querySelector('[data-cid="UF_CRM_1701416970265"]');
 
-			tanxaLariValue = <?echo $price;?> ;
+			tanxaLariValue = <?echo $priceLari ;?>;
 
 			// tanxaLariValue = tanxaLari.children[3].children[0].children[0].textContent;
 			// tanxaLariValue = tanxaLariValue.replace("₾", "");
