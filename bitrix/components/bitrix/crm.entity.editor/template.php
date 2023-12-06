@@ -1128,12 +1128,12 @@ if(!empty($htmlEditorConfigs))
 			let addPaymentContainer = `
 			<div id="addPaymentContainer" style="position: absolute; left: 25%; top: 15%; z-index: 1000; width: 600px; padding: 0 20px 0; background-color: #fff;">
 					<div style="height: 49px;">
-						<span class="popup-window-titlebar-text">საწყობის ცვლილება</span>
+						<span class="popup-window-titlebar-text">გადახდის დამატება</span>
 					</div>
 					<div style="overflow-x: auto; padding: 20px; background-color: #eef2f4;">
 						<div>
 							<div class="bizproc-item bizproc-workflow-template" style="border: 1px solid #D8D8D8; padding: 0 1.5em 1.5em 1em;">
-								<span class="bizproc-item-legend bizproc-workflow-template-title" style="padding: 0 1em; margin-left: 2em; font-size: 110%; color: #000000; position: absolute; top: 61px; background: #eef2f4;">საწყობის ცვლილება</span>
+								<span class="bizproc-item-legend bizproc-workflow-template-title" style="padding: 0 1em; margin-left: 2em; font-size: 110%; color: #000000; position: absolute; top: 61px; background: #eef2f4;">გადახდის დამატება</span>
 								<div class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
 									
 								<div   id="priceDiv" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
