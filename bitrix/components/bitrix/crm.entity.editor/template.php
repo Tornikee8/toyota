@@ -130,7 +130,13 @@ if(!$deal[0]["OPPORTUNITY"] || $deal[0]["OPPORTUNITY"] == 0){
 	$price=0;
 }
 $priceGel=explode("|",$deal[0]["UF_CRM_1701416970265"]);
-$priceLari = $priceGel[0];
+
+if($$priceGel[0]){
+	$priceLari = $priceGel[0];
+}else{
+	$priceLari = 0;
+}
+
 
 $currentStage=$deal[0]["STAGE_ID"];
 $recomendPrice=$product[0]["recomendedPrice"];
@@ -1092,9 +1098,11 @@ if(!empty($htmlEditorConfigs))
 		let deal = <?php echo json_encode($deal); ?>;
 		let currentStage = <?php echo json_encode($currentStage); ?>;
 
-
+		if(!currentStage){
+			currentStage = "new";
+		}
+		
 		stageArr=currentStage.split(":");
-
 
 		if(stageArr[0] !="C1"){
 			let gadaxdebiDIV=
@@ -1502,14 +1510,39 @@ if(!empty($htmlEditorConfigs))
 		setInterval(() => {
 			saveBtn=document.querySelector(".crm-entity-popup-fill-required-fields-btns");
 			if(saveBtn){
-				pnInput=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[0].children[2].children[0].children[0].children[0].value;
-				mailInpit=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[2].children[2].children[0].children[0].children[0].value;
 
-				emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+				pnAutirisation = "YES";
+				mailAutorisation = "YES";
 
-				let isValidEmail1 = emailRegex.test(mailInpit);
+				for (let i = 0; i < saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children.length; i++) {
 
-				if(pnInput.length == 11 && Number(pnInput) && isValidEmail1){
+					inputsName = saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[i].children[1].children[0].innerText;
+
+					if(inputsName == "პირადი ნომერი"){
+						pnAutirisation = "NO";
+						pnInput=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[i].children[2].children[0].children[0].children[0].value;
+
+						if(pnInput.length == 11 && Number(pnInput)){
+							pnAutirisation = "YES";
+						}
+
+					}else if(inputsName == "Mail"){
+						mailAutorisation = "NO";
+						mailInpit=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[i].children[2].children[0].children[0].children[0].value;
+						emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+						let isValidEmail1 = emailRegex.test(mailInpit);
+						if(isValidEmail1){
+							mailAutorisation = "YES";
+						}
+					}
+			
+					
+				}
+				// pnInput=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[0].children[2].children[0].children[0].children[0].value;
+				// mailInpit=saveBtn.parentElement.children[0].children[12].children[0].children[5].children[0].children[1].children[2].children[2].children[0].children[0].children[0].value;
+
+
+				if(pnAutirisation == "YES" && mailAutorisation=="YES"){
 					saveBtn.children[0].style.display="";				
 				}else{
 					saveBtn.children[0].style.display="none";

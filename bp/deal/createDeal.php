@@ -64,53 +64,53 @@ $dealHistory = $Product[0]["deal_history"];
 
 if(!$prodDeal){
 
-    $arFilter=array("ID"=>44);
-    $invoiceNumElem=getCIBlockElementsByFilter_6($arFilter);
+    // $arFilter=array("ID"=>44);
+    // $invoiceNumElem=getCIBlockElementsByFilter_6($arFilter);
 
-    $lastInvoiceNum = $invoiceNumElem[0]["NUM"];
-    $lastInvoiceNum = $lastInvoiceNum + 1;
+    // $lastInvoiceNum = $invoiceNumElem[0]["NUM"];
+    // $lastInvoiceNum = $lastInvoiceNum + 1;
 
 
-    $invoiceNumElem[0]["NUM"] = $lastInvoiceNum;
+    // $invoiceNumElem[0]["NUM"] = $lastInvoiceNum;
     
 
-    $arLoadProductArray = array(
-        "PROPERTY_VALUES" => $invoiceNumElem[0],
-        "NAME" => $invoiceNumElem[0]["NAME"],
-        "ACTIVE" => "Y",
-    );
+    // $arLoadProductArray = array(
+    //     "PROPERTY_VALUES" => $invoiceNumElem[0],
+    //     "NAME" => $invoiceNumElem[0]["NAME"],
+    //     "ACTIVE" => "Y",
+    // );
 
-    $el = new CIBlockElement;
-    $res = $el->Update(44, $arLoadProductArray);
-
-
-    $invoiceNumLength=strlen($lastInvoiceNum);
+    // $el = new CIBlockElement;
+    // $res = $el->Update(44, $arLoadProductArray);
 
 
-    switch($invoiceNumLength) {
-        case 1:
-            $lastInvoiceNum = "TCT00000$lastInvoiceNum";
-            break;
-        case 2:
-            $lastInvoiceNum = "TCT0000$lastInvoiceNum";
-            break;
-        case 3:
-            $lastInvoiceNum = "TCT000$lastInvoiceNum";
-            break;
-        case 4:
-            $lastInvoiceNum = "TCT00$lastInvoiceNum";
-            break;
-        case 5:
-            $lastInvoiceNum = "TCT0$lastInvoiceNum";
-            break;
-    }
+    // $invoiceNumLength=strlen($lastInvoiceNum);
 
-    if($invoiceNums){
-        array_push($invoiceNums , $lastInvoiceNum);
-    }else{
-        $invoiceNums = array();
-        array_push($invoiceNums , $lastInvoiceNum);
-    }
+
+    // switch($invoiceNumLength) {
+    //     case 1:
+    //         $lastInvoiceNum = "TCT00000$lastInvoiceNum";
+    //         break;
+    //     case 2:
+    //         $lastInvoiceNum = "TCT0000$lastInvoiceNum";
+    //         break;
+    //     case 3:
+    //         $lastInvoiceNum = "TCT000$lastInvoiceNum";
+    //         break;
+    //     case 4:
+    //         $lastInvoiceNum = "TCT00$lastInvoiceNum";
+    //         break;
+    //     case 5:
+    //         $lastInvoiceNum = "TCT0$lastInvoiceNum";
+    //         break;
+    // }
+
+    // if($invoiceNums){
+    //     array_push($invoiceNums , $lastInvoiceNum);
+    // }else{
+    //     $invoiceNums = array();
+    //     array_push($invoiceNums , $lastInvoiceNum);
+    // }
 
     if($contacts){
         array_push($contacts , $contactID);
@@ -129,7 +129,7 @@ if(!$prodDeal){
 
 
     // $Product[0]["DEAL"] = $deal_ID;  დაინტერესებულზე ბევრის შექმნა შეეძლოთ
-    $Product[0]["Invoice_num"] = $invoiceNums;
+    // $Product[0]["Invoice_num"] = $invoiceNums;   ინვოისი მხოლოდ ჯავშნის შემდეგ დაგენერირდეს
     $Product[0]["CLIENTS"] = $contacts;
     $Product[0]["deal_history"] = $dealHistory;
     $Product[0]["deal_status"] = 90;
@@ -144,10 +144,10 @@ if(!$prodDeal){
     $res = $el->Update($ProductID, $arLoadProductArray);  
     
     
-    $CCrmDeal = new CCrmDeal();
-    $upd = array(
-        "UF_CRM_1699001429021" => $lastInvoiceNum,
-    );
-    $CCrmDeal->Update($deal_ID, $upd);
+    // $CCrmDeal = new CCrmDeal();
+    // $upd = array(
+    //     "UF_CRM_1699001429021" => $lastInvoiceNum,
+    // );
+    // $CCrmDeal->Update($deal_ID, $upd);
 
 }
