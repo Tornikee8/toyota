@@ -41,13 +41,23 @@ $Product=getCIBlockElementsByFilter($arFilter);
 if($Product[0]['ID']){
     
     $Product[0]["VENDOR_BWFR1K"] = "კავკასიის საწყობი";
-    $Product[0]["PRICE__8S8T3Z"] = $params['price'];
-    $Product[0]["PRICE_GEL_BS052Y"] = $params['priceGel'];
+
     
     if($Product[0]["deal_status"] == "დაჯავშნილი"){
         $Product[0]["deal_status"] = 87;
     }elseif($Product[0]["deal_status"] == "კალკულაციის მოლოდინში"){
-        $Product[0]["deal_status"] = 88;
+        $Product[0]["deal_status"] = 87;  //   88 იყო კალკულაციის მოლოდინი და internal stock-ში კალკულაციის მოლოდინი არ უნდა იყოს
+
+        $deal_ID = $Product[0]["DEAL"]
+
+
+
+        $CCrmDeal = new CCrmDeal();
+        $upd = array(
+            "STAGE_ID" => "UC_DPD51C",   // დაჯავშნულზე გადატანა
+        );
+        $CCrmDeal->Update($deal_ID, $upd);
+
     }
     elseif($Product[0]["deal_status"] == "დაინტერესებული"){
         $Product[0]["deal_status"] = 90;
@@ -66,6 +76,9 @@ if($Product[0]['ID']){
 
     $el = new CIBlockElement;
     $res = $el->Update($ProductID, $arLoadProductArray);
+
+        
+    
 
 
 

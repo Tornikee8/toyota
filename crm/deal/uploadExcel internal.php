@@ -104,7 +104,7 @@
 
 
 
-    if($registeredProds['good']){
+    if($registeredProds['good'] || $registeredProds['new']){
 
     
 

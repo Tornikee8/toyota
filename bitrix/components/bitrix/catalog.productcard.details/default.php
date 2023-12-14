@@ -321,20 +321,17 @@ let prodChangeContanier = `
 					<span class="bizproc-item-legend bizproc-workflow-template-title" style="padding: 0 1em; margin-left: 2em; font-size: 110%; color: #000000; position: absolute; top: 61px; background: #eef2f4;">საწყობის ცვლილება</span>
 					<div class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
 						
-					<div   id="priceDiv" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
+					
+					<div   id="approve" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
 						<span style="display: block; margin: 0 0 15px 0; font-size: 13px; color: #80868e;">
-							ფასი:
+							გსურთ აღნიშნული მანქანის Internal Stock-ში გადატანა?
 						</span>
 						<div>
-							<input id="priceValue" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="text" />
-						</div>
-					</div>	
-					<div   id="priceDivGel" class="bizproc-modern-type-control-container" style="margin: 10px 0 17px 0; position: relative;">
-						<span style="display: block; margin: 0 0 15px 0; font-size: 13px; color: #80868e;">
-							ფასი (ლარი):
-						</span>
-						<div>
-							<input id="priceValueGel" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;" type="text" />
+							<select id="approveValue" class="bizproc-type-control bizproc-type-control-double" style="width: 100%; height: 36px;">
+								<option value=""></option>
+								<option value="yes">კი</option>
+								<option value="no">არა</option>
+							</select>
 						</div>
 					</div>	
 					</div>
@@ -372,38 +369,40 @@ function removeProdChange() {
 
 function saveProdChange() {
           
-	let price = document.getElementById("priceValue").value;
-	let priceGel = document.getElementById("priceValueGel").value;
 
-	if(!price || !priceGel){
-		let error = document.getElementById("prodChangeWarningBlock").style.display="block";
-	}
+	let isApproved = document.getElementById("approveValue").value;
 
 
-	if(price && priceGel) {
+	if(isApproved) {
 
-		let params = {};
 
-		params["price"] = price;
-		params["priceGel"] = priceGel;
-		params["prodId"]=pathname[5];
-		
+		if(isApproved == "yes"){
+			let params = {};
 
-		console.log(params);
-	
-		post_fetch(`${location.origin}/rest/local/changeCategory.php`, {"params":params})
-        .then(data => {
-            return data.json();
-        })
-        .then(data => {
-            console.log(data);
-        })
-        .catch(err => {
-            console.log(err);
-   		 });
-		 
+			params["prodId"]=pathname[5];
 
-		location.href='http://213.131.35.178:62100/crm/catalog/list/16/?IBLOCK_ID=14';
+
+			console.log(params);
+
+			post_fetch(`${location.origin}/rest/local/changeCategory.php`, {"params":params})
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				console.log(data);
+			})
+			.catch(err => {
+				console.log(err);
+				});
+			
+
+			location.href='http://213.131.35.178:62100/crm/catalog/list/16/?IBLOCK_ID=14';
+
+		}else{
+			removeProdChange();
+			console.log(isApproved);
+		}
+
 		
 	}
 }
